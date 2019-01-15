@@ -1,0 +1,7 @@
+1. Document any known bugs.
+At first, I didn't softmax in the actor function and I will get error in the train-episode function, later, considering the result we get from the actor function should be a probability distribution that we are supposed to take the softmax value, I made the change and get the right result.
+
+
+2. Explain what changes you would have to make to turn your Actor Critic algorithm into a REINFORCE algorithm.
+Then we don't need the critic function and we don't need to calculate the advantage in the loss function, we just need to use -tf.reduce_mean(tf.log(actprobs) * rewards) to get the loss.
+
