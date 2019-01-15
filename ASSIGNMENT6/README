@@ -1,0 +1,9 @@
+- What would you need to change in your model to make it a Vanilla Network?
+I will remove the attention part and directly use the final encoder state as the initial state for the decoder.
+
+- Provide details of your implementation, any known bugs, etc.
+The forward-pass is composed of three main parts. One is the dynamic_rnn for encoder part, one is the attention and the other is the dynamic_rnn for decoder part. The dynamic_rnn mainly depends on embeddings and the GRU cell. For attention, I first create a random_normal matrix with size [french_window_size, English_window_size] and tensordot the transposed encoder output with the matrix and then do the transpose again to make it to be the decoder input. Then concatenate this decoder input with the embeds as the final decoder_input send to the dynamic_rnn and make the initial_state for decoder part be the final encoder state. Then at last use a Wight and bias to calculate the logins.
+
+Loss function uses tf.contrib.seq2seq.sequence_loss where I make a mask of size [self.decoder_input_length, ENGLISH_WINDOW_SIZE] to use as the weight parameter in the sequence_loss to calculate the per-symbol loss.
+ 
+In the main function, I first process the data to become all ids instead of words and get the valid part for decoder input and decoder output labels. In the testing, I go over each batch and in each batch I calculate the symbol length to add to the total symbol length. Also, add the symbol length per batch times the per_symbol loss in a batch to the total loss. At last, use the total loss divided by the total symbol length to get the per-symbol loss for the whole testing data.
